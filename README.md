@@ -25,6 +25,31 @@
   <a href="#code-layout">Code Layout</a>
 </p>
 
+<table>
+<tr>
+<td align="center" width="120">
+  <img src="assets/icons/candidate-pool.svg" width="44" height="44" alt="Candidate Pool"><br>
+  <sub><b>Candidate Pool</b></sub>
+</td>
+<td align="center" width="120">
+  <img src="assets/icons/intent-plan.svg" width="44" height="44" alt="Intent Plan"><br>
+  <sub><b>Intent Plan</b></sub>
+</td>
+<td align="center" width="120">
+  <img src="assets/icons/memory-chain.svg" width="44" height="44" alt="Memory Chain"><br>
+  <sub><b>Memory Chain</b></sub>
+</td>
+<td align="center" width="120">
+  <img src="assets/icons/active-memory.svg" width="44" height="44" alt="Active Memory"><br>
+  <sub><b>Active Memory</b></sub>
+</td>
+<td align="center" width="120">
+  <img src="assets/icons/rl-training.svg" width="44" height="44" alt="SFT to RL"><br>
+  <sub><b>SFT + RL</b></sub>
+</td>
+</tr>
+</table>
+
 <p>
   <img src="assets/figure2_memchain_overview.png" alt="MemChain overview" width="94%">
 </p>
