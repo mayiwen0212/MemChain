@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "memchain"
+version = "0.1.0"
+description = "Intent-guided MemChain active memory construction for long-dialogue agents."
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{ name = "mayiwen0212" }]
+license = { text = "MIT" }
+dependencies = [
+  "numpy>=1.24",
+  "requests>=2.31",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.4"]
+llm = ["openai>=1.0", "httpx>=0.25"]
+dense = ["sentence-transformers>=2.2"]
+benchmarks = ["dataclasses-json>=0.6", "jsonlines>=3.0"]
+
+[tool.setuptools.packages.find]
+include = ["memchain*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
