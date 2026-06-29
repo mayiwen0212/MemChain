@@ -1,9 +1,21 @@
-# MemChain
+<h1 align="center">MemChain</h1>
 
-MemChain is a query-guided active-memory construction method for long-dialogue
-agents. Given a user question and a candidate memory pool, MemChain builds an
-interpretable memory trace and produces compact active memories for a frozen
-answer model.
+<p align="center">
+  <b>Learning Interpretable Memory Traces for Memory-Augmented LLM Agents</b>
+</p>
+
+<p align="center">
+  Query-guided active-memory construction for long-dialogue agents.
+</p>
+
+<p align="center">
+  <img src="assets/figure2_memchain_overview.png" alt="MemChain overview" width="92%">
+</p>
+
+MemChain builds an interpretable memory trace from a user question and a
+candidate memory pool, then composes compact active memories for a frozen answer
+model. The goal is to make memory use explicit, grounded, and controllable
+instead of passing raw retrieved memories directly to the answer model.
 
 ## Core Pipeline
 
@@ -25,6 +37,7 @@ provenance, not the gold answer.
 
 ```text
 memchain/
+  data/benchmarks/base.py        # normalized dialogue/session/QA dataclasses
   memory_pool/intent_guided.py   # answer-blind candidate memory pool
   schema.py                      # MemChain data schema
   framework.py                   # framework wrapper and active-memory composer
