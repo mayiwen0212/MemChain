@@ -34,6 +34,7 @@ def main() -> None:
     parser.add_argument("--input", type=Path, required=True, help="Normalized Benchmark JSONL.")
     parser.add_argument("--output", type=Path, required=True, help="Output JSONL with candidate_memories.")
     parser.add_argument("--max-candidates", type=int, default=18)
+    parser.add_argument("--no-dense", action="store_true", help="Run the lightweight BM25/metadata path only.")
     args = parser.parse_args()
 
     benchmark = Benchmark.from_jsonl(args.input)
@@ -45,7 +46,7 @@ def main() -> None:
             store = AtomicMemoryStore.from_dialogue_windows(dialogue)
             builder = IntentGuidedMemoryPoolBuilder(
                 store,
-                config=MemoryPoolConfig(max_candidates=args.max_candidates),
+                config=MemoryPoolConfig(max_candidates=args.max_candidates, use_dense=not args.no_dense),
             )
             examples = build_dialogue_memory_pool_examples(
                 dialogue,

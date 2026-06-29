@@ -1,37 +1,136 @@
-<h1 align="center">MemChain</h1>
+<div align="center">
 
-<p align="center">
+<h1>MemChain</h1>
+
+<p>
   <b>Learning Interpretable Memory Traces for Memory-Augmented LLM Agents</b>
 </p>
 
-<p align="center">
+<p>
   Query-guided active-memory construction for long-dialogue agents.
 </p>
 
-<p align="center">
-  <img src="assets/figure2_memchain_overview.png" alt="MemChain overview" width="92%">
+<p>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-2EA44F?style=flat&labelColor=555" alt="License"></a>
+  <a href="pyproject.toml"><img src="https://img.shields.io/badge/python-3.10+-3776AB?style=flat&labelColor=555&logo=python&logoColor=white" alt="Python"></a>
+  <a href="tests"><img src="https://img.shields.io/badge/tests-pytest-0A7E8C?style=flat&labelColor=555" alt="Tests"></a>
+  <a href="assets/figure2_memchain_overview.png"><img src="https://img.shields.io/badge/figure-MemChain_overview-B72A3F?style=flat&labelColor=555" alt="Figure"></a>
 </p>
 
-MemChain builds an interpretable memory trace from a user question and a
-candidate memory pool, then composes compact active memories for a frozen answer
-model. The goal is to make memory use explicit, grounded, and controllable
-instead of passing raw retrieved memories directly to the answer model.
+<p>
+  <a href="#quick-start">Quick Start</a> ·
+  <a href="#method-overview">Method Overview</a> ·
+  <a href="#run-the-example">Run the Example</a> ·
+  <a href="#training">Training</a> ·
+  <a href="#code-layout">Code Layout</a>
+</p>
 
-## Core Pipeline
+<p>
+  <img src="assets/figure2_memchain_overview.png" alt="MemChain overview" width="94%">
+</p>
+
+</div>
+
+## Highlights
+
+MemChain is a read-time memory policy for long-dialogue agents. Given a user
+question and a candidate memory pool, it produces an explicit memory trace
+before the answer model is called:
+
+- `intent_plan`: what evidence the question requires.
+- `memory_actions`: which memories to keep, drop, refine, merge, or stop on.
+- `memory_chain`: ordered evidence steps with memory citations.
+- `active_memories`: compact answer-ready memories passed to a frozen answer model.
+
+The candidate-memory pool is answer-blind: it uses the question and dialogue
+provenance, not the gold answer. This keeps retrieval, policy learning, and
+answer generation separated and auditable.
+
+## Quick Start
+
+```bash
+git clone https://github.com/mayiwen0212/MemChain.git
+cd MemChain
+pip install -e ".[dev]"
+pytest -q
+```
+
+Run the local example:
+
+```bash
+python scripts/build_memory_pool.py \
+  --input examples/minimal_dialogue.jsonl \
+  --output examples/out/minimal_candidates.jsonl \
+  --max-candidates 8 \
+  --no-dense
+
+python scripts/run_heuristic_policy.py \
+  --input examples/out/minimal_candidates.jsonl \
+  --output examples/out/minimal_policy_outputs.jsonl \
+  --keep-k 3
+```
+
+Inspect one MemChain policy output:
+
+```bash
+head -n 1 examples/out/minimal_policy_outputs.jsonl | python -m json.tool | head -80
+```
+
+The example is compact, but it follows the same public contract as the full
+experiments: normalized dialogue history, answer-blind candidate construction,
+structured policy output, and active-memory composition.
+
+## Method Overview
 
 MemChain follows this read-time pipeline:
 
-1. Build provenance-preserving candidate memories from long dialogue history.
-2. Infer the question intent and retrieve a bounded candidate memory pool.
-3. Generate a structured memory trace with:
-   - `intent_plan`
-   - `memory_actions`
-   - `memory_chain`
-   - `active_memories`
-4. Feed only `question + active_memories` to the answer model.
+1. Convert long dialogue history into provenance-preserving candidate memories.
+2. Infer the evidence need from the question.
+3. Build a bounded candidate pool with lexical, entity, temporal, and
+   multi-hop retrieval views.
+4. Produce a structured MemChain trace with actions and cited chain steps.
+5. Pass only `question + active_memories` to the answer model.
 
-The memory-pool builder is answer-blind: it uses the question and dialogue
-provenance, not the gold answer.
+This design makes memory use explicit instead of silently stuffing raw retrieved
+notes into the answer context.
+
+## Run the Example
+
+The repository includes a complete compact benchmark file:
+
+```text
+examples/minimal_dialogue.jsonl
+```
+
+It contains:
+
+- three timestamped dialogue sessions,
+- two QA pairs,
+- answer-session provenance,
+- one fact lookup question and one temporal tracking question.
+
+After running the quick-start commands, the generated policy rows contain:
+
+```json
+{
+  "intent_plan": {"intent": "fact_lookup", "...": "..."},
+  "memory_actions": [{"action": "KEEP", "memory_id": "..."}],
+  "memory_chain": [{"step_id": "c1", "memory_ids": ["..."]}],
+  "active_memories": ["..."]
+}
+```
+
+## Training
+
+The intended training setup is H200 eight-card training.
+
+In our experiments, the MemChain policy is trained with an SFT-to-RL workflow on
+8 x H200 GPUs. The released repository keeps the method-facing modules, schema,
+memory-pool construction, policy IO, reward utilities, metrics, and smoke tests.
+
+Private dataset paths, model checkpoints, API keys, service endpoints, raw
+benchmark dumps, and machine-specific launch scripts are intentionally not
+included.
 
 ## Code Layout
 
@@ -39,7 +138,7 @@ provenance, not the gold answer.
 memchain/
   data/benchmarks/base.py        # normalized dialogue/session/QA dataclasses
   memory_pool/intent_guided.py   # answer-blind candidate memory pool
-  schema.py                      # MemChain data schema
+  schema.py                      # public MemChain data schema
   framework.py                   # framework wrapper and active-memory composer
   prompts.py                     # policy and teacher prompts
   policy_io.py                   # policy JSON parsing and SFT row export
@@ -49,29 +148,10 @@ memchain/
 scripts/
   build_memory_pool.py           # build candidate pools from normalized JSONL
   run_heuristic_policy.py        # deterministic policy sanity check
+examples/
+  minimal_dialogue.jsonl         # runnable open-source example
 tests/
   test_core.py
-```
-
-## Training
-
-The intended training setup is H200 eight-card training.
-
-In our experiments, MemChain policy training uses an SFT-to-RL workflow on
-8 x H200 GPUs. The released code keeps the method-facing modules and reward
-utilities clean; dataset paths, checkpoints, private endpoints, and cluster
-launch scripts are intentionally not included.
-
-## Install
-
-```bash
-pip install -e ".[dev]"
-```
-
-Optional dense retrieval:
-
-```bash
-pip install -e ".[dense]"
 ```
 
 ## Data Interface
@@ -81,8 +161,10 @@ core dataclasses are in `memchain/data/benchmarks/base.py`.
 
 Each policy input uses:
 
+- `sample_id`
 - `question`
 - `candidate_memories`
+- optional `gold_answer`
 - optional `metadata`
 
 Each policy output uses:
@@ -91,13 +173,25 @@ Each policy output uses:
 - `memory_actions`
 - `memory_chain`
 - `active_memories`
+- `sufficiency`
 
 ## Scope
 
-This repository only contains MemChain core code. It does not include
-third-party comparison code, benchmark raw data, trained checkpoints, evaluation
-outputs, paper draft folders, private API keys, private endpoints, or
-machine-specific paths.
+This repository contains the MemChain core implementation for open-source
+inspection and extension. It does not include third-party comparison code,
+benchmark raw data, trained checkpoints, evaluation outputs, paper drafts,
+private API keys, private endpoints, or machine-specific paths.
+
+## Citation
+
+```bibtex
+@misc{memchain2026,
+  title  = {MemChain: Learning Interpretable Memory Traces for Memory-Augmented LLM Agents},
+  author = {Ma, Yiwen},
+  year   = {2026},
+  note   = {Open-source code release}
+}
+```
 
 ## License
 

@@ -12,6 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from memchain.framework import ActiveMemoryComposer, MemChainBuilder
 from memchain.heuristics import heuristic_policy
 from memchain.schema import MemChainExample, validate_example
 
@@ -24,6 +25,8 @@ def main() -> None:
     args = parser.parse_args()
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
+    chain_builder = MemChainBuilder()
+    composer = ActiveMemoryComposer()
     count = 0
     with args.input.open("r", encoding="utf-8") as reader, args.output.open("w", encoding="utf-8") as writer:
         for line in reader:
@@ -32,6 +35,10 @@ def main() -> None:
                 continue
             example = MemChainExample.from_dict(json.loads(line))
             labeled = heuristic_policy(example, keep_k=args.keep_k)
+            if not labeled.memory_chain:
+                labeled.memory_chain = chain_builder.build(labeled)
+            if not labeled.active_memories:
+                labeled.active_memories = composer.compose(labeled)
             errors = validate_example(labeled, require_labels=True)
             if errors:
                 raise ValueError(f"{example.sample_id} failed validation: {errors}")

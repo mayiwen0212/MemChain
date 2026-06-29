@@ -11,6 +11,7 @@ venv/
 
 data/
 outputs/
+examples/out/
 eval_outputs/
 experiments/
 checkpoints/
