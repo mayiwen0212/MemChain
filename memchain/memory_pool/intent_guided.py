@@ -18,7 +18,7 @@ from typing import Any, Iterable
 import numpy as np
 
 from memchain.data.benchmarks.base import Benchmark, Dialogue, QAPair
-from memchain.intentmem.schema import CandidateMemory, IntentMemExample
+from memchain.schema import CandidateMemory, MemChainExample
 
 
 TOKEN_RE = re.compile(r"\w+", flags=re.UNICODE)
@@ -491,12 +491,12 @@ def build_locomo_memory_pool_examples(
     limit: int | None = None,
     stratified_counts: dict[str, int] | None = None,
     dialogue_groups: dict[str, str] | None = None,
-) -> list[IntentMemExample]:
+) -> list[MemChainExample]:
     """Build LoCoMo candidate-pool examples with one pool per QA item."""
 
     dialogue_groups = dialogue_groups or LOCOMO_DIALOGUE_GROUPS
     used_by_type: Counter[str] = Counter()
-    examples: list[IntentMemExample] = []
+    examples: list[MemChainExample] = []
     for dialogue in benchmark.dialogues:
         group = dialogue_groups.get(dialogue.dialogue_id, dialogue.dialogue_id)
         for qa in dialogue.qa_pairs:
@@ -523,14 +523,14 @@ def build_dialogue_memory_pool_examples(
     *,
     benchmark_name: str = "synthetic_long_dialogue_qa",
     sample_prefix: str = "intent_guided_memory_pool",
-) -> list[IntentMemExample]:
+) -> list[MemChainExample]:
     """Build candidate-pool examples for any dialogue-shaped benchmark item."""
 
-    examples: list[IntentMemExample] = []
+    examples: list[MemChainExample] = []
     for qa in dialogue.qa_pairs:
         candidates, intent, trace = builder.build_pool(qa.question, group=dialogue.dialogue_id)
         examples.append(
-            IntentMemExample(
+            MemChainExample(
                 sample_id=f"{sample_prefix}:{benchmark_name}:{dialogue.dialogue_id}:{qa.question_id}",
                 question=qa.question,
                 gold_answer=qa.gold_answer,
@@ -557,8 +557,8 @@ def _to_example(
     candidates: list[CandidateMemory],
     intent: QuestionIntent,
     trace: dict[str, Any],
-) -> IntentMemExample:
-    return IntentMemExample(
+) -> MemChainExample:
+    return MemChainExample(
         sample_id=f"intent_guided_memory_pool:locomo:{dialogue.dialogue_id}:{qa.question_id}",
         question=qa.question,
         gold_answer=qa.gold_answer,

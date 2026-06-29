@@ -7,7 +7,7 @@ import re
 from datetime import datetime, timedelta
 from typing import Iterable
 
-from memchain.intentmem.schema import CandidateMemory, IntentMemExample
+from memchain.schema import CandidateMemory, MemChainExample
 
 POLICY_SYSTEM = """You are a MemChain active memory policy.
 Return only one JSON object. No markdown, no prose.
@@ -611,7 +611,7 @@ def _memory_rank(memory: CandidateMemory, fallback_idx: int) -> int:
         return fallback_idx + 1
 
 
-def _evidence_verifier_hints(example: IntentMemExample) -> str:
+def _evidence_verifier_hints(example: MemChainExample) -> str:
     """High-recall evidence checklist computed only from question and candidates."""
     question = example.question.lower()
     memories = list(example.candidate_memories)
@@ -882,7 +882,7 @@ def _active_only_candidate_order(
 
 
 def build_policy_messages(
-    example: IntentMemExample,
+    example: MemChainExample,
     *,
     max_candidate_chars: int = 700,
     max_candidates: int | None = None,
@@ -901,7 +901,7 @@ def build_policy_messages(
 
 
 def build_active_only_policy_messages(
-    example: IntentMemExample,
+    example: MemChainExample,
     *,
     max_candidate_chars: int = 700,
     max_candidates: int | None = None,
@@ -926,7 +926,7 @@ def build_active_only_policy_messages(
 
 
 def build_chain_active_policy_messages(
-    example: IntentMemExample,
+    example: MemChainExample,
     *,
     max_candidate_chars: int = 700,
     max_candidates: int | None = None,
@@ -945,7 +945,7 @@ def build_chain_active_policy_messages(
 
 
 def build_no_intent_plan_policy_messages(
-    example: IntentMemExample,
+    example: MemChainExample,
     *,
     max_candidate_chars: int = 700,
     max_candidates: int | None = None,
@@ -964,7 +964,7 @@ def build_no_intent_plan_policy_messages(
 
 
 def build_no_memory_chain_policy_messages(
-    example: IntentMemExample,
+    example: MemChainExample,
     *,
     max_candidate_chars: int = 700,
     max_candidates: int | None = None,
@@ -982,7 +982,7 @@ def build_no_memory_chain_policy_messages(
     return [{"role": "system", "content": NO_MEMORY_CHAIN_POLICY_SYSTEM}, {"role": "user", "content": user}]
 
 
-def build_teacher_messages(example: IntentMemExample, *, max_candidate_chars: int = 700) -> list[dict[str, str]]:
+def build_teacher_messages(example: MemChainExample, *, max_candidate_chars: int = 700) -> list[dict[str, str]]:
     metadata = {
         key: example.metadata.get(key)
         for key in ["benchmark", "question_type", "dialogue_id", "question_id"]
@@ -1010,7 +1010,7 @@ def build_answer_messages(question: str, active_memories: list[str]) -> list[dic
     return [{"role": "system", "content": ANSWER_SYSTEM}, {"role": "user", "content": user}]
 
 
-def response_json(example: IntentMemExample) -> str:
+def response_json(example: MemChainExample) -> str:
     payload = {
         "intent_plan": example.intent_plan.to_dict() if example.intent_plan else None,
         "memory_actions": [action.to_dict() for action in example.memory_actions],

@@ -6,7 +6,7 @@ import re
 from collections import Counter
 from typing import Iterable
 
-from memchain.intentmem.schema import IntentMemExample, MemoryAction
+from memchain.schema import MemChainExample, MemoryAction
 
 TOKEN_RE = re.compile(r"\w+", flags=re.UNICODE)
 SPACE_RE = re.compile(r"\s+")
@@ -70,11 +70,11 @@ def approx_token_count(text: str) -> int:
     return len(TOKEN_RE.findall(text))
 
 
-def active_memory_token_count(example: IntentMemExample) -> int:
+def active_memory_token_count(example: MemChainExample) -> int:
     return sum(approx_token_count(text) for text in example.active_memories)
 
 
-def memory_chain_validity(example: IntentMemExample) -> dict[str, float]:
+def memory_chain_validity(example: MemChainExample) -> dict[str, float]:
     selected = selected_ids(example.memory_actions)
     if not example.memory_chain:
         valid_empty = 1.0 if not selected else 0.0
@@ -95,7 +95,7 @@ def memory_chain_validity(example: IntentMemExample) -> dict[str, float]:
     }
 
 
-def dataset_summary(examples: Iterable[IntentMemExample], *, require_labels: bool = False) -> dict[str, object]:
+def dataset_summary(examples: Iterable[MemChainExample], *, require_labels: bool = False) -> dict[str, object]:
     rows = list(examples)
     intents: Counter[str] = Counter()
     actions: Counter[str] = Counter()

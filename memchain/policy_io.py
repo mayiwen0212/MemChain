@@ -1,4 +1,4 @@
-"""Policy IO helpers shared by IntentMem scripts."""
+"""Policy IO helpers shared by MemChain scripts."""
 
 from __future__ import annotations
 
@@ -12,11 +12,11 @@ from urllib.parse import urlparse
 
 import requests
 
-from memchain.intentmem.prompts import build_policy_messages, response_json
-from memchain.intentmem.schema import (
+from memchain.prompts import build_policy_messages, response_json
+from memchain.schema import (
     INTENTS,
     SUFFICIENCY_LABELS,
-    IntentMemExample,
+    MemChainExample,
     IntentPlan,
     MemoryAction,
     MemoryChainStep,
@@ -119,11 +119,11 @@ def _resolve_memory_ref(ref: str, candidate_ids: set[str]) -> tuple[str | None, 
 
 
 def apply_policy_payload(
-    base: IntentMemExample,
+    base: MemChainExample,
     payload: dict[str, Any],
     *,
     preserve_missing_intent_plan: bool = False,
-) -> IntentMemExample:
+) -> MemChainExample:
     active_raw = payload.get("active_memories", [])
     active: list[str] = []
     if isinstance(active_raw, list):
@@ -233,7 +233,7 @@ def apply_policy_payload(
     if repairs:
         metadata["policy_repairs"] = repairs
 
-    return IntentMemExample(
+    return MemChainExample(
         sample_id=base.sample_id,
         question=base.question,
         gold_answer=base.gold_answer,
@@ -247,7 +247,7 @@ def apply_policy_payload(
     )
 
 
-def to_sft_row(example: IntentMemExample) -> dict[str, Any]:
+def to_sft_row(example: MemChainExample) -> dict[str, Any]:
     return {
         "messages": build_policy_messages(example),
         "response": response_json(example),

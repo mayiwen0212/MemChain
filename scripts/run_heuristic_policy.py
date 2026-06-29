@@ -12,8 +12,8 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from memchain.intentmem.heuristics import heuristic_policy
-from memchain.intentmem.schema import IntentMemExample, validate_example
+from memchain.heuristics import heuristic_policy
+from memchain.schema import MemChainExample, validate_example
 
 
 def main() -> None:
@@ -30,7 +30,7 @@ def main() -> None:
             line = line.strip()
             if not line:
                 continue
-            example = IntentMemExample.from_dict(json.loads(line))
+            example = MemChainExample.from_dict(json.loads(line))
             labeled = heuristic_policy(example, keep_k=args.keep_k)
             errors = validate_example(labeled, require_labels=True)
             if errors:

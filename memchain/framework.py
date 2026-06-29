@@ -18,11 +18,11 @@ from dataclasses import dataclass, field
 from typing import Callable, Iterable, Sequence
 
 from memchain.data.benchmarks.base import Dialogue, QAPair
-from memchain.intentmem.heuristics import heuristic_policy
-from memchain.intentmem.retriever import raw_session_memories, retrieve_candidates
-from memchain.intentmem.schema import (
+from memchain.heuristics import heuristic_policy
+from memchain.retriever import raw_session_memories, retrieve_candidates
+from memchain.schema import (
     CandidateMemory,
-    IntentMemExample,
+    MemChainExample,
     MemoryAction,
     MemoryChainStep,
 )
@@ -33,7 +33,7 @@ class MemorySubstrate:
     """Project-owned representation of historical dialogue memory units."""
 
     memories: tuple[CandidateMemory, ...]
-    substrate_id: str = "intentmem_memory_substrate"
+    substrate_id: str = "memchain_memory_substrate"
     metadata: dict[str, object] = field(default_factory=dict)
 
     @classmethod
@@ -70,8 +70,8 @@ class PolicyInputBuilder:
         candidate_memories: Sequence[CandidateMemory],
         gold_answer: str = "",
         metadata: dict[str, object] | None = None,
-    ) -> IntentMemExample:
-        return IntentMemExample(
+    ) -> MemChainExample:
+        return MemChainExample(
             sample_id=sample_id,
             question=question,
             gold_answer=gold_answer,
@@ -99,7 +99,7 @@ class MemChainBuilder:
 
     max_statement_chars: int = 180
 
-    def build(self, example: IntentMemExample) -> list[MemoryChainStep]:
+    def build(self, example: MemChainExample) -> list[MemoryChainStep]:
         by_id = {memory.memory_id: memory for memory in example.candidate_memories}
         steps: list[MemoryChainStep] = []
         selected_actions = [
@@ -129,7 +129,7 @@ class MemChainBuilder:
         return steps
 
     @staticmethod
-    def _role_for(example: IntentMemExample, action: MemoryAction, *, is_first: bool) -> str:
+    def _role_for(example: MemChainExample, action: MemoryAction, *, is_first: bool) -> str:
         intent = example.intent_plan.intent if example.intent_plan else ""
         if intent == "temporal_state_tracking":
             return "seed_evidence" if is_first else "temporal_update"
@@ -148,7 +148,7 @@ class ActiveMemoryComposer:
 
     max_raw_chars: int = 360
 
-    def compose(self, example: IntentMemExample) -> list[str]:
+    def compose(self, example: MemChainExample) -> list[str]:
         by_id = {memory.memory_id: memory for memory in example.candidate_memories}
         active: list[str] = []
         for action in example.memory_actions:
@@ -170,11 +170,11 @@ class ActiveMemoryComposer:
         return active
 
 
-PolicyFn = Callable[[IntentMemExample], IntentMemExample]
+PolicyFn = Callable[[MemChainExample], MemChainExample]
 
 
 @dataclass(frozen=True)
-class IntentMemFramework:
+class MemChainFramework:
     """End-to-end framework wrapper for non-generation experiments."""
 
     candidate_generator: CandidateMemoryGenerator = field(default_factory=CandidateMemoryGenerator)
@@ -182,7 +182,7 @@ class IntentMemFramework:
     chain_builder: MemChainBuilder = field(default_factory=MemChainBuilder)
     composer: ActiveMemoryComposer = field(default_factory=ActiveMemoryComposer)
 
-    def build_policy_input(self, dialogue: Dialogue, qa: QAPair, *, benchmark: str) -> IntentMemExample:
+    def build_policy_input(self, dialogue: Dialogue, qa: QAPair, *, benchmark: str) -> MemChainExample:
         substrate = MemorySubstrate.from_dialogue(dialogue)
         candidates = self.candidate_generator.generate(qa.question, substrate)
         sample_id = f"{benchmark}:{dialogue.dialogue_id}:{qa.question_id}"
@@ -197,18 +197,15 @@ class IntentMemFramework:
                 "question_id": qa.question_id,
                 "question_type": qa.question_type,
                 "answer_session_ids": list(qa.answer_session_ids),
-                "candidate_source": "intentmem_memory_substrate",
+                "candidate_source": "memchain_memory_substrate",
                 "candidate_top_k": self.candidate_generator.top_k,
             },
         )
 
-    def run_policy(self, example: IntentMemExample, policy: PolicyFn | None = None) -> IntentMemExample:
+    def run_policy(self, example: MemChainExample, policy: PolicyFn | None = None) -> MemChainExample:
         out = policy(example) if policy is not None else heuristic_policy(example)
         if not out.memory_chain:
             out.memory_chain = self.chain_builder.build(out)
         if not out.active_memories:
             out.active_memories = self.composer.compose(out)
         return out
-
-
-MemChainFramework = IntentMemFramework

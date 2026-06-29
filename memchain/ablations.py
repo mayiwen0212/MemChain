@@ -1,4 +1,4 @@
-"""Ablation transforms for IntentMem policy outputs.
+"""Ablation transforms for MemChain policy outputs.
 
 These transforms operate on existing labeled or predicted policy outputs.  They
 do not create new teacher labels; they provide reproducible variants for
@@ -9,8 +9,8 @@ from __future__ import annotations
 
 from dataclasses import replace
 
-from memchain.intentmem.heuristics import active_statement
-from memchain.intentmem.schema import IntentMemExample, IntentPlan, MemoryAction
+from memchain.heuristics import active_statement
+from memchain.schema import MemChainExample, IntentPlan, MemoryAction
 
 ABLATION_MODES = (
     "full",
@@ -27,22 +27,22 @@ ABLATION_MODES = (
 )
 
 
-def _copy(example: IntentMemExample) -> IntentMemExample:
-    return IntentMemExample.from_dict(example.to_dict())
+def _copy(example: MemChainExample) -> MemChainExample:
+    return MemChainExample.from_dict(example.to_dict())
 
 
-def _with_metadata(example: IntentMemExample, mode: str) -> IntentMemExample:
-    example.metadata = {**example.metadata, "intentmem_ablation": mode}
+def _with_metadata(example: MemChainExample, mode: str) -> MemChainExample:
+    example.metadata = {**example.metadata, "memchain_ablation": mode}
     return example
 
 
-def _fallback_intent_plan(example: IntentMemExample, *, budget: int) -> IntentPlan:
+def _fallback_intent_plan(example: MemChainExample, *, budget: int) -> IntentPlan:
     if example.intent_plan is not None:
         return replace(example.intent_plan, budget=budget)
     return IntentPlan(intent="fact_lookup", needed_types=["episodic"], time_scope="any", budget=budget)
 
 
-def _fixed_topk(example: IntentMemExample, *, k: int, mode: str) -> IntentMemExample:
+def _fixed_topk(example: MemChainExample, *, k: int, mode: str) -> MemChainExample:
     out = _copy(example)
     kept = out.candidate_memories[:k]
     kept_ids = {memory.memory_id for memory in kept}
@@ -61,7 +61,7 @@ def _fixed_topk(example: IntentMemExample, *, k: int, mode: str) -> IntentMemExa
     return _with_metadata(out, mode)
 
 
-def apply_ablation(example: IntentMemExample, mode: str) -> IntentMemExample:
+def apply_ablation(example: MemChainExample, mode: str) -> MemChainExample:
     if mode not in ABLATION_MODES:
         raise ValueError(f"Unknown ablation mode: {mode}")
     if mode == "full":

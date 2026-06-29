@@ -161,7 +161,7 @@ class MemoryChainStep:
 
 
 @dataclass
-class IntentMemExample:
+class MemChainExample:
     sample_id: str
     question: str
     gold_answer: str = ""
@@ -174,7 +174,7 @@ class IntentMemExample:
     metadata: dict[str, Any] = field(default_factory=dict)
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "IntentMemExample":
+    def from_dict(cls, data: dict[str, Any]) -> "MemChainExample":
         candidates = [
             CandidateMemory.from_dict(row)
             for row in data.get("candidate_memories", data.get("candidates", []))
@@ -236,11 +236,7 @@ class IntentMemExample:
                 selected.update(action.referenced_ids())
         return selected
 
-
-MemChainExample = IntentMemExample
-
-
-def validate_example(example: IntentMemExample, *, require_labels: bool = False) -> list[str]:
+def validate_example(example: MemChainExample, *, require_labels: bool = False) -> list[str]:
     errors: list[str] = []
     if not example.sample_id:
         errors.append("missing sample_id")
@@ -285,21 +281,21 @@ def validate_example(example: IntentMemExample, *, require_labels: bool = False)
     return errors
 
 
-def read_jsonl(path: str | Path) -> list[IntentMemExample]:
+def read_jsonl(path: str | Path) -> list[MemChainExample]:
     path = Path(path)
-    rows: list[IntentMemExample] = []
+    rows: list[MemChainExample] = []
     with path.open("r", encoding="utf-8") as reader:
         for line_no, line in enumerate(reader, 1):
             if not line.strip():
                 continue
             try:
-                rows.append(IntentMemExample.from_dict(json.loads(line)))
+                rows.append(MemChainExample.from_dict(json.loads(line)))
             except json.JSONDecodeError as exc:
                 raise ValueError(f"{path}:{line_no}: invalid JSONL: {exc}") from exc
     return rows
 
 
-def write_jsonl(path: str | Path, examples: Iterable[IntentMemExample]) -> None:
+def write_jsonl(path: str | Path, examples: Iterable[MemChainExample]) -> None:
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8") as writer:

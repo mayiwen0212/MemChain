@@ -4,10 +4,10 @@ from __future__ import annotations
 
 from collections import Counter
 
-from memchain.intentmem.retriever import tokenize
-from memchain.intentmem.schema import (
+from memchain.retriever import tokenize
+from memchain.schema import (
     CandidateMemory,
-    IntentMemExample,
+    MemChainExample,
     IntentPlan,
     MemoryAction,
 )
@@ -49,7 +49,7 @@ def active_statement(memory: CandidateMemory, *, max_chars: int = 360) -> str:
     return content[: max_chars - 3].rstrip() + "..."
 
 
-def heuristic_policy(example: IntentMemExample, *, keep_k: int = 5) -> IntentMemExample:
+def heuristic_policy(example: MemChainExample, *, keep_k: int = 5) -> MemChainExample:
     question_type = str(example.metadata.get("question_type", "") or "")
     intent = infer_intent(example.question, question_type)
     ranked = sorted(
@@ -91,7 +91,7 @@ def heuristic_policy(example: IntentMemExample, *, keep_k: int = 5) -> IntentMem
             reason="selected evidence is enough" if active else "no supporting memory was found",
         )
     )
-    return IntentMemExample(
+    return MemChainExample(
         sample_id=example.sample_id,
         question=example.question,
         gold_answer=example.gold_answer,

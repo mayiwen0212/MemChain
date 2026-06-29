@@ -9,7 +9,7 @@ from datetime import datetime
 from typing import Sequence
 
 from memchain.data.benchmarks.base import Dialogue, Session
-from memchain.intentmem.schema import CandidateMemory
+from memchain.schema import CandidateMemory
 
 TOKEN_RE = re.compile(r"\w+", flags=re.UNICODE)
 STOPWORDS = {

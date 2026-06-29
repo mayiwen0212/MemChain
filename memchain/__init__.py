@@ -1,13 +1,12 @@
 """MemChain public package."""
 
-from memchain.intentmem.framework import IntentMemFramework, MemChainBuilder, MemChainFramework
-from memchain.intentmem.schema import (
+from memchain.framework import MemChainBuilder, MemChainFramework
+from memchain.schema import (
     ACTIONS,
     INTENTS,
     CandidateMemory,
-    IntentMemExample,
-    IntentPlan,
     MemChainExample,
+    IntentPlan,
     MemoryAction,
     MemoryChainStep,
 )
@@ -18,12 +17,10 @@ __all__ = [
     "ACTIONS",
     "INTENTS",
     "CandidateMemory",
-    "IntentMemExample",
-    "IntentMemFramework",
-    "IntentPlan",
-    "MemChainBuilder",
     "MemChainExample",
     "MemChainFramework",
+    "IntentPlan",
+    "MemChainBuilder",
     "MemoryAction",
     "MemoryChainStep",
 ]

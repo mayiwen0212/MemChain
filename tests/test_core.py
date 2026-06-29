@@ -3,10 +3,10 @@ from __future__ import annotations
 from datetime import datetime
 
 from memchain.data.benchmarks.base import Benchmark, Dialogue, QAPair, Session, Utterance
-from memchain.intentmem.framework import CandidateMemoryGenerator, IntentMemFramework
-from memchain.intentmem.heuristics import heuristic_policy
-from memchain.intentmem.metrics import active_memory_token_count, memory_precision_recall
-from memchain.intentmem.schema import CandidateMemory, IntentMemExample, MemoryAction, validate_example
+from memchain.framework import CandidateMemoryGenerator, MemChainFramework
+from memchain.heuristics import heuristic_policy
+from memchain.metrics import active_memory_token_count, memory_precision_recall
+from memchain.schema import CandidateMemory, MemChainExample, MemoryAction, validate_example
 from memchain.memory_pool.intent_guided import (
     AtomicMemoryStore,
     IntentGuidedMemoryPoolBuilder,
@@ -14,7 +14,7 @@ from memchain.memory_pool.intent_guided import (
 )
 
 
-def toy_dialogue() -> Dialogue:
+def sample_dialogue() -> Dialogue:
     return Dialogue(
         dialogue_id="d1",
         sessions=[
@@ -47,7 +47,7 @@ def toy_dialogue() -> Dialogue:
 
 
 def test_intent_guided_memory_pool_is_answer_blind_and_valid() -> None:
-    dialogue = toy_dialogue()
+    dialogue = sample_dialogue()
     store = AtomicMemoryStore.from_dialogue_windows(dialogue)
     builder = IntentGuidedMemoryPoolBuilder(store, config=MemoryPoolConfig(max_candidates=4, use_dense=False))
     candidates, intent, trace = builder.build_pool(dialogue.qa_pairs[0].question, group=dialogue.dialogue_id)
@@ -60,9 +60,9 @@ def test_intent_guided_memory_pool_is_answer_blind_and_valid() -> None:
 
 
 def test_framework_builds_policy_output() -> None:
-    dialogue = toy_dialogue()
-    framework = IntentMemFramework(candidate_generator=CandidateMemoryGenerator(top_k=2))
-    example = framework.build_policy_input(dialogue, dialogue.qa_pairs[0], benchmark="toy")
+    dialogue = sample_dialogue()
+    framework = MemChainFramework(candidate_generator=CandidateMemoryGenerator(top_k=2))
+    example = framework.build_policy_input(dialogue, dialogue.qa_pairs[0], benchmark="synthetic")
     out = framework.run_policy(example, lambda row: heuristic_policy(row, keep_k=1))
 
     assert validate_example(out, require_labels=True) == []
@@ -80,16 +80,16 @@ def test_action_metric_uses_selected_ids_only() -> None:
 
 
 def test_benchmark_jsonl_roundtrip(tmp_path) -> None:
-    benchmark = Benchmark(name="toy", dialogues=[toy_dialogue()])
-    path = tmp_path / "toy.jsonl"
+    benchmark = Benchmark(name="synthetic", dialogues=[sample_dialogue()])
+    path = tmp_path / "synthetic.jsonl"
     benchmark.to_jsonl(path)
     loaded = Benchmark.from_jsonl(path)
-    assert loaded.name == "toy"
+    assert loaded.name == "synthetic"
     assert loaded.total_qa_pairs() == 1
 
 
 def test_schema_validation_rejects_unknown_candidate_reference() -> None:
-    example = IntentMemExample(
+    example = MemChainExample(
         sample_id="s1",
         question="What changed?",
         candidate_memories=[CandidateMemory(memory_id="m1", content="A useful memory.")],
