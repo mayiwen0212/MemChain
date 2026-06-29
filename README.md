@@ -56,22 +56,63 @@
 
 </div>
 
-## Highlights
+<h2 id="highlights">
+  <img src="assets/icons/highlights.svg" width="24" height="24" alt="Highlights" align="absmiddle">
+  Highlights
+</h2>
 
 MemChain is a read-time memory policy for long-dialogue agents. Given a user
 question and a candidate memory pool, it produces an explicit memory trace
 before the answer model is called:
 
-- `intent_plan`: what evidence the question requires.
-- `memory_actions`: which memories to keep, drop, refine, merge, or stop on.
-- `memory_chain`: ordered evidence steps with memory citations.
-- `active_memories`: compact answer-ready memories passed to a frozen answer model.
+<table>
+<tr>
+<td width="32"><img src="assets/icons/intent-plan.svg" width="24" height="24" alt="Intent Plan"></td>
+<td><code>intent_plan</code>: what evidence the question requires.</td>
+</tr>
+<tr>
+<td width="32"><img src="assets/icons/candidate-pool.svg" width="24" height="24" alt="Memory Actions"></td>
+<td><code>memory_actions</code>: which memories to keep, drop, refine, merge, or stop on.</td>
+</tr>
+<tr>
+<td width="32"><img src="assets/icons/memory-chain.svg" width="24" height="24" alt="Memory Chain"></td>
+<td><code>memory_chain</code>: ordered evidence steps with memory citations.</td>
+</tr>
+<tr>
+<td width="32"><img src="assets/icons/active-memory.svg" width="24" height="24" alt="Active Memory"></td>
+<td><code>active_memories</code>: compact answer-ready memories passed to a frozen answer model.</td>
+</tr>
+</table>
 
 The candidate-memory pool is answer-blind: it uses the question and dialogue
 provenance, not the gold answer. This keeps retrieval, policy learning, and
 answer generation separated and auditable.
 
-## Quick Start
+<h2 id="quick-start">
+  <img src="assets/icons/quick-start.svg" width="24" height="24" alt="Quick Start" align="absmiddle">
+  Quick Start
+</h2>
+
+<table>
+<tr>
+<td align="center" width="120">
+  <img src="assets/icons/quick-start.svg" width="30" height="30" alt="Install"><br>
+  <sub><b>Install</b></sub>
+</td>
+<td align="center" width="120">
+  <img src="assets/icons/candidate-pool.svg" width="30" height="30" alt="Build Pool"><br>
+  <sub><b>Build Pool</b></sub>
+</td>
+<td align="center" width="120">
+  <img src="assets/icons/memory-chain.svg" width="30" height="30" alt="Run Policy"><br>
+  <sub><b>Run Policy</b></sub>
+</td>
+<td align="center" width="120">
+  <img src="assets/icons/active-memory.svg" width="30" height="30" alt="Inspect Trace"><br>
+  <sub><b>Inspect Trace</b></sub>
+</td>
+</tr>
+</table>
 
 ```bash
 git clone https://github.com/mayiwen0212/MemChain.git
