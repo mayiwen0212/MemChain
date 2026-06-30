@@ -1,19 +1,11 @@
 <div align="center">
 
-<p>
-  <img src="assets/memchain-logo.png" alt="MemChain logo" width="260">
-</p>
+<h1>
+  <img src="assets/memchain-mark.svg" alt="MemChain logo" width="56" align="center">
+  MemChain
+</h1>
 
-<h1>MemChain: Interpretable Active Memory for LLM Agents</h1>
-
-<p>
-  <b>Learning query-guided memory traces instead of retrieving fixed top-k context.</b>
-</p>
-
-<p>
-  MemChain builds auditable evidence chains, memory actions, and compact active
-  memories for long-dialogue question answering.
-</p>
+## Learning Interpretable Memory Traces for Memory-Augmented<br>LLM Agents
 
 <p>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-2EA44F?style=flat&labelColor=555" alt="License"></a>

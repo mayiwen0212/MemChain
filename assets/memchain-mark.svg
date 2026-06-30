@@ -1,0 +1,27 @@
+<svg width="160" height="160" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="memchain-bg" x1="24" y1="20" x2="136" y2="140" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0F766E"/>
+      <stop offset="1" stop-color="#111827"/>
+    </linearGradient>
+    <linearGradient id="memchain-accent" x1="38" y1="44" x2="124" y2="116" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#67E8F9"/>
+      <stop offset="0.55" stop-color="#22D3EE"/>
+      <stop offset="1" stop-color="#F59E0B"/>
+    </linearGradient>
+    <filter id="soft-shadow" x="6" y="6" width="148" height="148" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="#0F172A" flood-opacity="0.18"/>
+    </filter>
+  </defs>
+  <rect x="18" y="18" width="124" height="124" rx="32" fill="url(#memchain-bg)" filter="url(#soft-shadow)"/>
+  <path d="M47 103C58.5 78.5 75.5 73.5 95 58" stroke="#A7F3D0" stroke-width="8" stroke-linecap="round"/>
+  <path d="M48 104C68 112 91 108 113 82" stroke="url(#memchain-accent)" stroke-width="8" stroke-linecap="round"/>
+  <circle cx="47" cy="103" r="15" fill="#111827" stroke="#67E8F9" stroke-width="7"/>
+  <circle cx="80" cy="82" r="15" fill="#111827" stroke="#2DD4BF" stroke-width="7"/>
+  <circle cx="113" cy="82" r="15" fill="#111827" stroke="#F59E0B" stroke-width="7"/>
+  <circle cx="95" cy="58" r="12" fill="#111827" stroke="#A7F3D0" stroke-width="6"/>
+  <path d="M48 48H75" stroke="#E5E7EB" stroke-width="7" stroke-linecap="round"/>
+  <path d="M48 63H65" stroke="#94A3B8" stroke-width="6" stroke-linecap="round"/>
+  <path d="M98 103H117" stroke="#E5E7EB" stroke-width="7" stroke-linecap="round"/>
+  <path d="M91 118H117" stroke="#94A3B8" stroke-width="6" stroke-linecap="round"/>
+</svg>
