@@ -1,13 +1,18 @@
 <div align="center">
 
-<h1>MemChain</h1>
+<p>
+  <img src="assets/memchain-logo.png" alt="MemChain logo" width="260">
+</p>
+
+<h1>MemChain: Interpretable Active Memory for LLM Agents</h1>
 
 <p>
-  <b>Learning Interpretable Memory Traces for Memory-Augmented LLM Agents</b>
+  <b>Learning query-guided memory traces instead of retrieving fixed top-k context.</b>
 </p>
 
 <p>
-  Query-guided active-memory construction for long-dialogue agents.
+  MemChain builds auditable evidence chains, memory actions, and compact active
+  memories for long-dialogue question answering.
 </p>
 
 <p>
