@@ -229,3 +229,4 @@ We would like to thank the following projects and teams:
 - 🧮 **Retrieval Core:** NumPy-backed in-memory dense scoring plus MemChain's BM25, entity, temporal, and feedback retrieval views for provenance-grounded candidate pools.
 - 📊 **Benchmark:** [LoCoMo](https://github.com/snap-research/locomo) - long-context memory evaluation framework.
 - 📚 **Benchmark:** [LongMemEval](https://github.com/xiaowu0162/LongMemEval) - long-range memory evaluation benchmark for conversational agents.
+- ⚖️ **Evaluation Judge:** LoCoMo-Refined by Memorax AI - refined judge support for more reliable long-memory answer evaluation.
