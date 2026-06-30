@@ -1,9 +1,8 @@
 <div align="center">
 
-<h1>
-  <img src="assets/memchain-mark.svg" alt="MemChain logo" width="56" align="center">
-  MemChain
-</h1>
+<p>
+  <img src="assets/memchain-wordmark.svg" alt="MemChain" width="430">
+</p>
 
 ## Learning Interpretable Memory Traces for Memory-Augmented<br>LLM Agents
 
