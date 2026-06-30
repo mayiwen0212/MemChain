@@ -229,6 +229,6 @@ for details.
 
 We would like to thank the following projects and teams:
 
-- 🔍 **Embedding Model:** [Qwen3-Embedding](https://github.com/QwenLM/Qwen3-Embedding) - retrieval embeddings for dense candidate-memory search.
-- 🗄️ **Vector Database:** [LanceDB](https://github.com/lancedb/lancedb) - high-performance vector storage used by the optional dense index.
+- 🔍 **Embedding Backend:** [Sentence Transformers](https://github.com/UKPLab/sentence-transformers) and compatible embedding models, such as [Qwen3-Embedding](https://github.com/QwenLM/Qwen3-Embedding), for optional dense candidate-memory search.
+- 🧮 **Retrieval Core:** NumPy-backed in-memory dense scoring plus MemChain's BM25, entity, temporal, and feedback retrieval views for provenance-grounded candidate pools.
 - 📊 **Benchmark:** [LoCoMo](https://github.com/snap-research/locomo) - long-context memory evaluation framework.
