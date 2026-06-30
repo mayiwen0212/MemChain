@@ -9,12 +9,12 @@ venv/
 .env
 *.log
 
-data/
-outputs/
-examples/out/
-eval_outputs/
-experiments/
-checkpoints/
-models/
+/data/
+/outputs/
+/examples/out/
+/eval_outputs/
+/experiments/
+/checkpoints/
+/models/
 wandb/
 swanlog/
