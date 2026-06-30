@@ -228,3 +228,4 @@ We would like to thank the following projects and teams:
 - 🔍 **Embedding Backend:** [Sentence Transformers](https://github.com/UKPLab/sentence-transformers) and compatible embedding models, such as [Qwen3-Embedding](https://github.com/QwenLM/Qwen3-Embedding), for optional dense candidate-memory search.
 - 🧮 **Retrieval Core:** NumPy-backed in-memory dense scoring plus MemChain's BM25, entity, temporal, and feedback retrieval views for provenance-grounded candidate pools.
 - 📊 **Benchmark:** [LoCoMo](https://github.com/snap-research/locomo) - long-context memory evaluation framework.
+- 📚 **Benchmark:** [LongMemEval](https://github.com/xiaowu0162/LongMemEval) - long-range memory evaluation benchmark for conversational agents.
