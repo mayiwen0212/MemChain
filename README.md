@@ -107,7 +107,7 @@ The example is compact, but it follows the same public contract as the full
 experiments: normalized dialogue history, answer-blind candidate construction,
 structured policy output, and active-memory composition.
 
-## Method Overview
+<h2 id="method-overview">🧭 Method Overview</h2>
 
 MemChain follows this read-time pipeline:
 
@@ -121,7 +121,7 @@ MemChain follows this read-time pipeline:
 This design makes memory use explicit instead of silently stuffing raw retrieved
 notes into the answer context.
 
-## Run the Example
+<h2 id="run-the-example">🧪 Run the Example</h2>
 
 The repository includes a complete compact benchmark file:
 
@@ -147,7 +147,7 @@ After running the quick-start commands, the generated policy rows contain:
 }
 ```
 
-## Training
+<h2 id="training">🏋️ Training</h2>
 
 The intended training setup is H200 eight-card training.
 
@@ -159,7 +159,7 @@ Private dataset paths, model checkpoints, API keys, service endpoints, raw
 benchmark dumps, and machine-specific launch scripts are intentionally not
 included.
 
-## Code Layout
+<h2 id="code-layout">🗂️ Code Layout</h2>
 
 ```text
 memchain/
@@ -181,7 +181,7 @@ tests/
   test_core.py
 ```
 
-## Data Interface
+<h2 id="data-interface">🔌 Data Interface</h2>
 
 Input data should be normalized as dialogues with sessions and QA pairs. The
 core dataclasses are in `memchain/data/benchmarks/base.py`.
@@ -202,14 +202,14 @@ Each policy output uses:
 - `active_memories`
 - `sufficiency`
 
-## Scope
+<h2 id="scope">📦 Scope</h2>
 
 This repository contains the MemChain core implementation for open-source
 inspection and extension. It does not include third-party comparison code,
 benchmark raw data, trained checkpoints, evaluation outputs, paper drafts,
 private API keys, private endpoints, or machine-specific paths.
 
-## Citation
+<h2 id="citation">📝 Citation</h2>
 
 ```bibtex
 @misc{memchain2026,
@@ -220,6 +220,15 @@ private API keys, private endpoints, or machine-specific paths.
 }
 ```
 
-## License
+<h2 id="license">📄 License</h2>
 
-MIT.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
+for details.
+
+<h2 id="acknowledgments">🙏 Acknowledgments</h2>
+
+We would like to thank the following projects and teams:
+
+- 🔍 **Embedding Model:** [Qwen3-Embedding](https://github.com/QwenLM/Qwen3-Embedding) - retrieval embeddings for dense candidate-memory search.
+- 🗄️ **Vector Database:** [LanceDB](https://github.com/lancedb/lancedb) - high-performance vector storage used by the optional dense index.
+- 📊 **Benchmark:** [LoCoMo](https://github.com/snap-research/locomo) - long-context memory evaluation framework.
